@@ -1,0 +1,5 @@
+path: C:/Users/micha/Documents/llabelImg/My_First_Project/dataset/train_dataset
+train: train/images
+val: val/images
+names:
+  0: tumor
