@@ -1,7 +1,8 @@
 # llabelImg: Brain Tumor Classification and Detection
 
 Two complementary deep-learning approaches to brain tumor analysis on MRI images,
-built in one workspace:
+built in one workspace, with both a Streamlit and a Gradio app on top for
+interactive use.
 
 | Project | Question it answers | Approach | Folder |
 |---|---|---|---|
@@ -19,6 +20,8 @@ Paths are relative to `~/Documents/llabelImg/`.
 llabelImg/
 ├── README.md                          # this page
 ├── LICENSE                            # MIT
+├── app_gradio.py                      # Gradio app (Classification + Detection tabs)
+├── requirements.txt            
 ├── brain_tumor_classification/
 │   ├── README.md
 │   ├── train.ipynb                    # augment, train, evaluate
@@ -57,7 +60,7 @@ llabelImg/
 
 See each project's README for the full method, tables and caveats.
 
-## Quick start
+## Quick start — training/notebooks
 
 The two projects use different frameworks (TensorFlow vs. PyTorch), so give each
 its own virtual environment.
@@ -68,7 +71,7 @@ its own virtual environment.
 cd ~/Documents/llabelImg/brain_tumor_classification
 python -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
-pip install tensorflow numpy matplotlib tqdm jupyter
+pip install -r requirements.txt
 jupyter notebook train.ipynb
 ```
 
@@ -78,7 +81,7 @@ jupyter notebook train.ipynb
 cd ~/Documents/llabelImg/brain_tumor_detection
 python -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
-pip install ultralytics jupyter
+pip install -r requirements.txt
 jupyter notebook split_train_test.ipynb
 ```
 
@@ -93,12 +96,60 @@ yolo detect predict model=runs/detect/train/weights/best.pt \
 Before running detection on another machine, edit the `path:` line in
 `brain_tumor_detection/data.yaml`; it currently points to an absolute Windows path.
 
+## Interactive apps
+
+Both apps expose the same two models — Classification and Detection tabs —
+just built on different UI frameworks. Use whichever fits your workflow.
+
+### Gradio app (`app_gradio.py`)
+
+**Setup** — To run the  `app_gradio.py`, the  `requirements.txt` already contains the libraries to be installed
+`C:\Users\micha\Documents\llabelImg`, alongside the two project folders (see
+the repository layout above), then:
+
+```powershell
+cd C:\Users\micha\Documents\llabelImg
+python -m venv app-venv
+app-venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+**Run:**
+
+```powershell
+python app_gradio.py
+```
+
+This starts a local server, normally at `http://localhost:7860`, and opens it
+in your browser.
+
+**Using it:**
+
+1. Pick the **Classification** or **Detection** tab.
+2. Upload a brain MRI slice (JPEG or JPG).
+3. Click **Classify** or **Detect**.
+   - Classification shows a verdict plus a probability bar for each class.
+   - Detection shows the image with boxes drawn on it and lists each region's
+     confidence; the slider controls the detection threshold (default 0.25,
+     matching the training notebook).
+
+If a model file is missing, the app raises a clear error naming the exact path
+it looked for, instead of failing silently.
+
+
+**Sharing the app:** `demo.launch()` at the bottom of `app_gradio.py` can take
+`share=True` to get a temporary public URL, or be deployed to Hugging Face
+Spaces as-is. Do not enable public sharing with real patient images without
+adding authentication first.
+
+
 ## Documentation
 
 | Document | Contents |
 |---|---|
 | [`brain_tumor_classification/README.md`](brain_tumor_classification/README.md) | Classification data, method, results, limitations |
 | [`brain_tumor_detection/README.md`](brain_tumor_detection/README.md) | Detection data, method, results, limitations |
+| [`README`](README.md) | General app setup/run notes (superseded by the "Interactive apps" section above, kept for standalone reference) |
 | [`LICENSE`](LICENSE) | MIT License |
 
 ## Limitations
